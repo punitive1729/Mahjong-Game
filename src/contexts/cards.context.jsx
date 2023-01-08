@@ -58,7 +58,6 @@ export const CardsContextProvider = ({ children }) => {
       if (tile.image === matchedImage) {
         setFirstRevealedCard(null);
         setSecondRevealedCard(null);
-
         return {
           ...tile,
           hasMatched: true,
