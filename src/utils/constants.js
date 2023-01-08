@@ -1,0 +1,21 @@
+export const TILES_NAMES = [
+  'Pin5.svg',
+  'Pin7.svg',
+  'Shaa.svg',
+  'Sou3.svg',
+  'Sou5-Dora.svg',
+  'Sou8.svg',
+  'Hatsu.svg',
+  'Man3.svg',
+  'Man5-Dora.svg',
+  'Man8.svg',
+  'Pei.svg',
+  'Pin3.svg',
+  'Pin5-Dora.svg',
+  'Pin8.svg',
+  'Sou1.svg',
+  'Sou4.svg',
+  'Sou6.svg',
+  'Sou9.svg',
+];
+export const FRONT_TILE_NAME = 'Front.svg';
