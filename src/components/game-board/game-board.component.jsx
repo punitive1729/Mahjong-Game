@@ -62,8 +62,11 @@ const GameBoard = () => {
 
   const flipCardToBack = (cardId, cardNumber, currGameState) => {
     const { firstRevealedCard, secondRevealedCard } = currGameState;
-    if (cardNumber === 1 && firstRevealedCard !== cardId) return currGameState;
-    if (cardNumber === 2 && secondRevealedCard !== cardId) return currGameState;
+    if (
+      (cardNumber === 1 && firstRevealedCard !== cardId) ||
+      (cardNumber === 2 && secondRevealedCard !== cardId)
+    )
+      return currGameState;
     const newGameState = { ...currGameState };
     if (cardNumber === 1) newGameState.firstRevealedCard = null;
     else newGameState.secondRevealedCard = null;
