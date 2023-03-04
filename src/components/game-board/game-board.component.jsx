@@ -30,8 +30,8 @@ const GameBoard = () => {
     return newTiles;
   };
 
-  const matched = (id1, id2) => {
-    const newTiles = [...allTiles];
+  const matched = (tiles, id1, id2) => {
+    const newTiles = [...tiles];
     newTiles[id1] = { ...newTiles[id1], isBack: false, hasMatched: true };
     newTiles[id2] = { ...newTiles[id2], isBack: false, hasMatched: true };
     return newTiles;
@@ -40,12 +40,14 @@ const GameBoard = () => {
   useEffect(() => {
     if (firstRevealedCard != null && secondRevealedCard != null) {
       if (
-        firstRevealedCard != secondRevealedCard &&
+        firstRevealedCard !== secondRevealedCard &&
         allTiles[firstRevealedCard].image === allTiles[secondRevealedCard].image
       ) {
-        setAllTiles(() => matched(firstRevealedCard, secondRevealedCard));
-        setFirstRevealedCard(null);
-        setSecondRevealedCard(null);
+        setAllTiles((allTiles) =>
+          matched(allTiles, firstRevealedCard, secondRevealedCard)
+        );
+        setFirstRevealedCard(() => null);
+        setSecondRevealedCard(() => null);
       }
     }
   }, [firstRevealedCard, secondRevealedCard]);
