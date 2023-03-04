@@ -1,6 +1,6 @@
 .game-board-container {
   background-color: rgb(204, 195, 164);
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -11,8 +11,7 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   flex-wrap: wrap;
-  width: 550px;
-  align-content: space-around;
+  width: 420px;
 }
 
 .play-container {
