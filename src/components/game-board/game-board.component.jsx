@@ -6,9 +6,7 @@ import { TILES_NAMES } from './../../utils/constants';
 
 const GameBoard = () => {
   const [playClicked, setPlayClicked] = useState(false);
-  const [allTiles, setAllTiles] = useState([]);
-  const [firstRevealedCard, setFirstRevealedCard] = useState(null);
-  const [secondRevealedCard, setSecondRevealedCard] = useState(null);
+  const [gameState, setGameState] = useState({});
 
   useEffect(() => {
     const tiles = [...TILES_NAMES, ...TILES_NAMES];
@@ -21,63 +19,84 @@ const GameBoard = () => {
         hasMatched: false,
       };
     });
-    setAllTiles(newAllTiles);
+    setGameState({
+      allTiles: newAllTiles,
+      firstRevealedCard: null,
+      secondRevealedCard: null,
+    });
   }, []);
 
-  const flipCardId = (tiles, id, isBack) => {
-    const newTiles = [...tiles];
-    newTiles[id] = { ...newTiles[id], isBack };
-    return newTiles;
+  const flipCardToFront = (id, cardNumber) => {
+    if (gameState.allTiles[id].hasMatched === true) return;
+    const newGameState = { ...gameState };
+    if (cardNumber === 1) newGameState.firstRevealedCard = id;
+    else newGameState.secondRevealedCard = id;
+    newGameState.allTiles[id] = { ...newGameState.allTiles[id], isBack: false };
+    setGameState(newGameState);
   };
 
-  const matched = (tiles, id1, id2) => {
-    const newTiles = [...tiles];
-    newTiles[id1] = { ...newTiles[id1], isBack: false, hasMatched: true };
-    newTiles[id2] = { ...newTiles[id2], isBack: false, hasMatched: true };
-    return newTiles;
+  const matched = (id1, id2) => {
+    console.log('Map..', id1, id2);
+    const newGameState = {
+      firstRevealedCard: null,
+      secondRevealedCard: null,
+      allTiles: [...gameState.allTiles],
+    };
+    newGameState.allTiles[id1].isBack = false;
+    newGameState.allTiles[id2].isBack = false;
+    newGameState.allTiles[id1].hasMatched = true;
+    newGameState.allTiles[id2].hasMatched = true;
+    setGameState(newGameState);
   };
 
   useEffect(() => {
-    if (firstRevealedCard != null && secondRevealedCard != null) {
-      if (
-        firstRevealedCard !== secondRevealedCard &&
-        allTiles[firstRevealedCard].image === allTiles[secondRevealedCard].image
-      ) {
-        setAllTiles((allTiles) =>
-          matched(allTiles, firstRevealedCard, secondRevealedCard)
-        );
-        setFirstRevealedCard(() => null);
-        setSecondRevealedCard(() => null);
-      }
-    }
-  }, [firstRevealedCard, secondRevealedCard]);
+    const { firstRevealedCard, secondRevealedCard } = gameState;
+    if (
+      firstRevealedCard !== null &&
+      secondRevealedCard !== null &&
+      firstRevealedCard !== secondRevealedCard &&
+      gameState.allTiles[firstRevealedCard].image ===
+        gameState.allTiles[secondRevealedCard].image
+    )
+      matched(firstRevealedCard, secondRevealedCard);
+  }, [gameState]);
+
+  const flipCardToBack = (cardId, cardNumber, currGameState) => {
+    if (cardNumber === 1 && currGameState.firstRevealedCard !== cardId)
+      return currGameState;
+    if (cardNumber === 2 && currGameState.secondRevealedCard !== cardId)
+      return currGameState;
+    const newGameState = { ...currGameState };
+    if (cardNumber === 1) newGameState.firstRevealedCard = null;
+    else newGameState.secondRevealedCard = null;
+    newGameState.allTiles[cardId] = {
+      ...newGameState.allTiles[cardId],
+      isBack: true,
+    };
+    return newGameState;
+  };
+
+  const flippingCard = (cardId, revealedCardNo) => {
+    flipCardToFront(cardId, revealedCardNo);
+    setTimeout(
+      () =>
+        setGameState((gameState) =>
+          flipCardToBack(cardId, revealedCardNo, gameState)
+        ),
+      1700
+    );
+  };
 
   const handleCardClick = (id) => {
-    if (firstRevealedCard === null) {
-      setFirstRevealedCard(() => id);
-      setAllTiles((allTiles) => flipCardId(allTiles, id, false));
-      setTimeout(() => {
-        setFirstRevealedCard(() => null);
-        setAllTiles((allTiles) => flipCardId(allTiles, id, true));
-      }, 1500);
-      return;
-    }
-    if (secondRevealedCard === null) {
-      console.log('SRC...');
-      setSecondRevealedCard(() => id);
-      setAllTiles((allTiles) => flipCardId(allTiles, id, false));
-      setTimeout(() => {
-        setSecondRevealedCard(() => null);
-        setAllTiles((allTiles) => flipCardId(allTiles, id, true));
-      }, 1500);
-    }
+    if (gameState.firstRevealedCard === null) return flippingCard(id, 1);
+    else if (gameState.secondRevealedCard === null) flippingCard(id, 2);
   };
 
   return (
     <div className='game-board-container'>
       {playClicked ? (
         <div className='tiles-container'>
-          {allTiles.map((tile, index) => {
+          {gameState.allTiles.map((tile, index) => {
             return (
               <Card
                 key={index}
