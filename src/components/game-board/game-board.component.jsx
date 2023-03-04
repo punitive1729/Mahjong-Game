@@ -26,17 +26,7 @@ const GameBoard = () => {
     });
   }, []);
 
-  const flipCardToFront = (id, cardNumber) => {
-    if (gameState.allTiles[id].hasMatched === true) return;
-    const newGameState = { ...gameState };
-    if (cardNumber === 1) newGameState.firstRevealedCard = id;
-    else newGameState.secondRevealedCard = id;
-    newGameState.allTiles[id] = { ...newGameState.allTiles[id], isBack: false };
-    setGameState(newGameState);
-  };
-
   const matched = (id1, id2) => {
-    console.log('Map..', id1, id2);
     const newGameState = {
       firstRevealedCard: null,
       secondRevealedCard: null,
@@ -61,11 +51,19 @@ const GameBoard = () => {
       matched(firstRevealedCard, secondRevealedCard);
   }, [gameState]);
 
+  const flipCardToFront = (id, cardNumber) => {
+    if (gameState.allTiles[id].hasMatched === true) return;
+    const newGameState = { ...gameState };
+    if (cardNumber === 1) newGameState.firstRevealedCard = id;
+    else newGameState.secondRevealedCard = id;
+    newGameState.allTiles[id] = { ...newGameState.allTiles[id], isBack: false };
+    setGameState(newGameState);
+  };
+
   const flipCardToBack = (cardId, cardNumber, currGameState) => {
-    if (cardNumber === 1 && currGameState.firstRevealedCard !== cardId)
-      return currGameState;
-    if (cardNumber === 2 && currGameState.secondRevealedCard !== cardId)
-      return currGameState;
+    const { firstRevealedCard, secondRevealedCard } = currGameState;
+    if (cardNumber === 1 && firstRevealedCard !== cardId) return currGameState;
+    if (cardNumber === 2 && secondRevealedCard !== cardId) return currGameState;
     const newGameState = { ...currGameState };
     if (cardNumber === 1) newGameState.firstRevealedCard = null;
     else newGameState.secondRevealedCard = null;
